@@ -16,4 +16,11 @@ morgan("short")
 morgan("tiny")
 npm i morgan --save-dev
 npm i helmet --save-dev (ngăn chặn hacker có thể kiểm tra xem website đang sử dụng công nghệ gì)
-npm i compression --save-dev ()
+npm i compression --save-dev
+npm i mongoose --save-dev 
+npm i bcrypt --save
+npm i crypto --save
+npm i jsonwebtoken --save
+npm i lodash --save
+
+extension vscode: Mongo Snippets for Node-js, Tabnine, REST Client
