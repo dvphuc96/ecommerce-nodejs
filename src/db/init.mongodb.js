@@ -1,8 +1,7 @@
 "use strict";
 
 const mongoose = require("mongoose");
-const connectString =
-  "mongodb+srv://docker:docker@cluster0.0p3njsd.mongodb.net/shop-dev?retryWrites=true&w=majority";
+const connectString = "mongodb://localhost:27017/shopDev"
 const { countConnect } = require(".././helpers/check-connect");
 // how to check
 class Database {

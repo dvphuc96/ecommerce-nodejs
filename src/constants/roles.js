@@ -1,0 +1,9 @@
+ROLE_SHOP = {
+  SHOP: "SHOP",
+  WRITER: "00001", // WRITER
+  EDITOR: "00002", // EDITOR
+  DELETE: "00003", // DELETE
+  ADMIN: "ADMIN",
+};
+
+module.exports = ROLE_SHOP;
