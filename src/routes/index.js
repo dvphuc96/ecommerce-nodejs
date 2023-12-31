@@ -1,13 +1,13 @@
 "use strict";
 
 const express = require("express");
+const { checkApiKey, checkPermission } = require("../auth/checkAuth");
 const router = express.Router();
 
-router.use('/v1/api/', require('./auth'))
-// router.get('', (req, res, next) => {
-//     return res.status(200).json({
-//         message: 'Wellcome shopdev!'
-//     })
-// })
+// check api key
+router.use(checkApiKey);
+// check permission
+router.use(checkPermission("0000"));
+router.use("/v1/api/", require("./auth"));
 
 module.exports = router;
