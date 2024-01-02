@@ -3,6 +3,7 @@ khởi tạo dự án
 npm init -y
 npm i express --save
 start server: node server.js
+watch server(nodemon): node --watch server.js
 // install package (quan trọng của 1 trang web)
 
 // kiểm tra trang web sử dụng công nghệ gì

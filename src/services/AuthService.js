@@ -93,7 +93,6 @@ class AuthService {
       );
       console.log("Create Token Success", tokens);
       return {
-        code: 201,
         metadata: {
           shop: getInfoData({
             fileds: ["_id", "name", "email"],
