@@ -2,8 +2,9 @@
 
 ### signup
 
-POST @{{url_dev}}/shop/signup
+POST @{{url_dev}}/shop/signupwews
 Content-Type: application/json
+x-api-key: 7627c06ba8bca7c04d160dd5dad00869468f9c9cdda47cd687b05dd1e72b60b17fb559136e7a334635ffd09493a208ae1f298c4367d556e2fb0b19c5f4e36bde
 
 {
     "name": "Shop PhucDz",
