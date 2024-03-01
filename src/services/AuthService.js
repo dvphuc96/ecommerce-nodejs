@@ -15,45 +15,11 @@ const {
 } = require("../core/errorResponse");
 const { findShopByEmail } = require("./ShopService");
 class AuthService {
-  /*
-   * 1: check email in database
-   * 2: match password
-   * 3: create access_token and refresh_token in database
-   * 4: generate tokens
-   * 5: get data return login
+  /**
+   * SignUp
+   * @param {*} param0
+   * @returns
    */
-  static login = async ({ email, password, refreshToken = null }) => {
-    // 1: check email in database
-    const shop = await findShopByEmail({ email });
-    if (!shop) throw new BadRequestError("Shop not registered!");
-
-    // 2: match password
-    const match = await bcrypt.compare(password, shop.password);
-    if (!match) throw new AuthFailureError("Authentication error!");
-
-    // 3: create access_token and refresh_token in database
-    const privateKey = crypto.randomBytes(64).toString("hex");
-    const publicKey = crypto.randomBytes(64).toString("hex");
-
-    // 4: generate tokens
-    // create token pair
-    const { _id: userId } = shop;
-    const tokens = await createTokenPair(
-      { userId, email },
-      publicKey,
-      privateKey
-    );
-    await KeyTokenService.createKeyTokenBasic({
-      userId,
-      refreshToken: tokens.refreshToken,
-      privateKey: publicKey,
-    });
-    return {
-      shop: getInfoData({ fileds: ["_id", "name", "email"], object: shop }),
-      tokens,
-    };
-  };
-
   static signUp = async ({ name, email, password }) => {
     // check email exists??
     const shopExists = await shopModel.findOne({ email }).lean();
@@ -84,6 +50,7 @@ class AuthService {
       // const publicKeyString = await KeyTokenService.createKeyTokenAdvanced({
       //     userId: newShop._id,
       //     publicKey,
+      //     privateKey
       //   });
       //   if (!publicKeyString) {
       //     return {
@@ -145,6 +112,56 @@ class AuthService {
       code: 200,
       metadata: null,
     };
+  };
+
+  /*
+   * 1: check email in database
+   * 2: match password
+   * 3: create access_token and refresh_token in database
+   * 4: generate tokens
+   * 5: get data return login
+   */
+  static login = async ({ email, password, refreshToken = null }) => {
+    // 1: check email in database
+    const shop = await findShopByEmail({ email });
+    if (!shop) throw new BadRequestError("Shop not registered!");
+
+    // 2: match password
+    const match = await bcrypt.compare(password, shop.password);
+    if (!match) throw new AuthFailureError("Authentication error!");
+
+    // 3: create access_token and refresh_token in database
+    const privateKey = crypto.randomBytes(64).toString("hex");
+    const publicKey = crypto.randomBytes(64).toString("hex");
+
+    // 4: generate tokens
+    // create token pair
+    const { _id: userId } = shop;
+    const tokens = await createTokenPair(
+      { userId, email },
+      publicKey,
+      privateKey
+    );
+    await KeyTokenService.createKeyTokenBasic({
+      userId,
+      refreshToken: tokens.refreshToken,
+      privateKey: publicKey,
+    });
+    return {
+      shop: getInfoData({ fileds: ["_id", "name", "email"], object: shop }),
+      tokens,
+    };
+  };
+
+  /**
+   * Logout
+   * @param {*} keyStore
+   * @returns
+   */
+  static logout = async (keyStore) => {
+    const delKey = await KeyTokenService.removeKeyByUserId(keyStore._id);
+    console.log({ delKey });
+    return delKey;
   };
 }
 

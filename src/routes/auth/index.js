@@ -2,7 +2,8 @@
 
 const express = require("express");
 const authController = require("../../controllers/AuthController");
-const { handlerError } = require("../../auth/checkAuth");
+const { handlerError } = require("../../helpers/common");
+const { authentication } = require("../../auth/authUtils");
 const router = express.Router();
 
 // signup
@@ -10,5 +11,11 @@ router.post("/shop/signup", handlerError(authController.signUp));
 
 // login
 router.post("/shop/login", handlerError(authController.login));
+
+// authentication
+router.use(authentication)
+
+// logout
+router.post("/shop/logout", handlerError(authController.logout));
 
 module.exports = router;
