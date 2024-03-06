@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("node:crypto"); // phiên bản tạo key thông thường dùng crypto của node
 const RoleShop = require("../constants/roles");
 const KeyTokenService = require("./KeyTokenService");
+const keyTokenModel = require("../models/key-token");
 const { createTokenPair, verifyToken } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
 const {
@@ -88,6 +89,7 @@ class AuthService {
 
       const keyStore = await KeyTokenService.createKeyTokenBasic({
         userId: newShop._id,
+        refreshToken: "",
         publicKey,
         privateKey,
       });
@@ -152,7 +154,8 @@ class AuthService {
     await KeyTokenService.createKeyTokenBasic({
       userId,
       refreshToken: tokens.refreshToken,
-      privateKey: publicKey,
+      privateKey,
+      publicKey,
     });
     return {
       shop: getInfoData({ fileds: ["_id", "name", "email"], object: shop }),
@@ -188,7 +191,7 @@ class AuthService {
     const { userId, email } = user;
 
     // check refreshToken used?
-    if (keyStore.refreshTokensUsed.includes(refreshToken)) {
+    if (keyStore.refreshTokenUsed.includes(refreshToken)) {
       await KeyTokenService.deleteKeyByUserId(userId);
       throw new ForbiddenError("Invalid detected, Please re-login");
     }
@@ -209,14 +212,13 @@ class AuthService {
     );
 
     // update token
-    await keyStore.update({
-      $set: {
-        refreshToken: tokens.refreshToken,
-      },
-      $addToSet: {
-        findKeyByRefreshTokenUsed: refreshToken, // đã được sử dụng để lấy token mới rồi.
-      },
-    });
+    await keyTokenModel.updateOne(
+      {},
+      {
+        $set: { refreshToken: tokens.refreshToken },
+        $addToSet: { refreshTokenUsed: refreshToken }, // đã được sử dụng để lấy token mới rồi.
+      }
+    );
     return {
       user,
       tokens,

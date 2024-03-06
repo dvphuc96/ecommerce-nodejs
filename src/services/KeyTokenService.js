@@ -52,6 +52,8 @@ class KeyTokenService {
       //   user: userId,
       //   publicKey,
       //   privateKey,
+      //   refreshTokenUsed: [],
+      //   refreshToken: null,
       // });
       // return tokens ? tokens.publicKey : null;
 
@@ -71,6 +73,7 @@ class KeyTokenService {
       );
       return tokens ? tokens.publicKey : null;
     } catch (error) {
+      console.log(error)
       return error;
     }
   };

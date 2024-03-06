@@ -68,11 +68,10 @@ const authentication = handlerError(async (req, res, next) => {
   const keyStore = await findKeyByUserId(userId);
   if (!keyStore) throw new NotFoundError("Not Found KeyStore");
 
-  console.log(keyStore)
   // 3. check refresh token
-  if (req.headers[HEADER.REFRESH_TOKEN]) {
+  const refreshToken = req.headers[HEADER.REFRESH_TOKEN];
+  if (refreshToken) {
     try {
-      const refreshToken = req.headers[HEADER.REFRESH_TOKEN];
       const decodeUser = JWT.verify(refreshToken, keyStore.privateKey);
       if (userId !== decodeUser.userId) throw new AuthFailureError("Invalid User");
       req.keyStore = keyStore;
@@ -89,7 +88,7 @@ const authentication = handlerError(async (req, res, next) => {
   if (!accessToken) throw new AuthFailureError("Invalid Request");
 
   try {
-    const decodeUser = JWT.verify(accessToken, keyStore.privateKey);
+    const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
     if (userId !== decodeUser.userId)
       throw new AuthFailureError("Invalid User");
     req.keyStore = keyStore;
