@@ -73,7 +73,7 @@ class KeyTokenService {
       );
       return tokens ? tokens.publicKey : null;
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       return error;
     }
   };
