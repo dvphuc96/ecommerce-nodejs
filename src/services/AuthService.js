@@ -5,18 +5,20 @@ const bcrypt = require("bcrypt");
 const crypto = require("node:crypto"); // phiên bản tạo key thông thường dùng crypto của node
 const RoleShop = require("../constants/roles");
 const KeyTokenService = require("./KeyTokenService");
-const { createTokenPair } = require("../auth/authUtils");
+const keyTokenModel = require("../models/key-token");
+const { createTokenPair, verifyToken } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
 const {
   BadRequestError,
   ConflictRequestError,
   ForbiddenRequestError,
   AuthFailureError,
+  ForbiddenError,
 } = require("../core/errorResponse");
 const { findShopByEmail } = require("./ShopService");
 class AuthService {
   /**
-   * SignUp
+   * SignUp Service
    * @param {*} param0
    * @returns
    */
@@ -87,6 +89,7 @@ class AuthService {
 
       const keyStore = await KeyTokenService.createKeyTokenBasic({
         userId: newShop._id,
+        refreshToken: "",
         publicKey,
         privateKey,
       });
@@ -114,14 +117,20 @@ class AuthService {
     };
   };
 
-  /*
-   * 1: check email in database
-   * 2: match password
-   * 3: create access_token and refresh_token in database
-   * 4: generate tokens
-   * 5: get data return login
+  /**
+   * Login Service
+   * @param {*} param0
+   * @returns
    */
   static login = async ({ email, password, refreshToken = null }) => {
+    /*
+     * Step 1: check email in database
+     * Step 2: match password
+     * Step 3: create access_token and refresh_token in database
+     * Step 4: generate tokens
+     * Step 5: get data return login
+     */
+
     // 1: check email in database
     const shop = await findShopByEmail({ email });
     if (!shop) throw new BadRequestError("Shop not registered!");
@@ -145,7 +154,8 @@ class AuthService {
     await KeyTokenService.createKeyTokenBasic({
       userId,
       refreshToken: tokens.refreshToken,
-      privateKey: publicKey,
+      privateKey,
+      publicKey,
     });
     return {
       shop: getInfoData({ fileds: ["_id", "name", "email"], object: shop }),
@@ -154,7 +164,7 @@ class AuthService {
   };
 
   /**
-   * Logout
+   * Logout Service
    * @param {*} keyStore
    * @returns
    */
@@ -162,6 +172,57 @@ class AuthService {
     const delKey = await KeyTokenService.removeKeyByUserId(keyStore._id);
     console.log({ delKey });
     return delKey;
+  };
+
+  /**
+   * Refresh Token Service
+   * @param {*} param0
+   * @returns
+   */
+  static refreshToken = async ({ keyStore, user, refreshToken }) => {
+    /*
+     * 1: check this token used.
+     * 2: match password
+     * 3: create access_token and refresh_token in database
+     * 4: generate tokens
+     * 5: get data return login
+     */
+
+    const { userId, email } = user;
+
+    // check refreshToken used?
+    if (keyStore.refreshTokenUsed.includes(refreshToken)) {
+      await KeyTokenService.deleteKeyByUserId(userId);
+      throw new ForbiddenError("Invalid detected, Please re-login");
+    }
+
+    // check refreshToken is valid?
+    if (keyStore.refreshToken !== refreshToken) {
+      throw new AuthFailureError("Shop not registered!");
+    }
+
+    const shop = await findShopByEmail({ email });
+    if (!shop) throw new AuthFailureError("Shop not registered!");
+
+    // create tokens new (accessToken, refreshToken)
+    const tokens = await createTokenPair(
+      { userId, email },
+      keyStore.publicKey,
+      keyStore.privateKey
+    );
+
+    // update token
+    await keyTokenModel.updateOne(
+      {},
+      {
+        $set: { refreshToken: tokens.refreshToken },
+        $addToSet: { refreshTokenUsed: refreshToken }, // đã được sử dụng để lấy token mới rồi.
+      }
+    );
+    return {
+      user,
+      tokens,
+    };
   };
 }
 
