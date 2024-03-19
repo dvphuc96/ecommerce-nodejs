@@ -10,12 +10,13 @@ class ProductController {
    * @param {*} next
    */
   createProduct = async (req, res, next) => {
+    console.log(req.user)
     new SuccessResponse({
       message: "Create New Product Success!",
-      metadata: await ProductService.createProduct(
-        req.body.product_type,
-        req.body
-      ),
+      metadata: await ProductService.createProduct(req.body.product_type, {
+        ...req.body,
+        product_shop: req.user.userId,
+      }),
     }).send(res);
   };
 }
