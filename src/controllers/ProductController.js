@@ -1,6 +1,6 @@
 "use strict";
 
-const ProductService = require("../services/ProductService");
+const ProductService = require("../services/ProductService-V2");
 const { SuccessResponse } = require("../core/successResponse");
 class ProductController {
   /**
@@ -10,7 +10,6 @@ class ProductController {
    * @param {*} next
    */
   createProduct = async (req, res, next) => {
-    console.log(req.user)
     new SuccessResponse({
       message: "Create New Product Success!",
       metadata: await ProductService.createProduct(req.body.product_type, {

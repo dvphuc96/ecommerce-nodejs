@@ -26,7 +26,7 @@ class ProductFactory {
    * Áp dụng Strategy Advanced
    */
   static async createProduct(type, payload) {
-    const productClass = this.productRegistry[type];
+    const productClass = ProductFactory.productRegistry[type];
     if (!productClass) {
       throw new BadRequestError(`Invalid Product Type ${type}`);
     }
