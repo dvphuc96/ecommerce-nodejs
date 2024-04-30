@@ -7,6 +7,13 @@ const {
   electronic,
   furniture,
 } = require("../models/product");
+const {
+  findAllDraftForShop,
+  findAllPublishForShop,
+  publishProductByShop,
+  unPublishProductByShop,
+  searchProductByUser,
+} = require("../models/repositories/product");
 
 // define Factory class to create Product
 
@@ -31,6 +38,43 @@ class ProductFactory {
       throw new BadRequestError(`Invalid Product Type ${type}`);
     }
     return new productClass(payload).createProduct();
+  }
+
+  static async publishProductByShop({ product_shop, product_id }) {
+    return await publishProductByShop({product_shop, product_id});
+  }
+
+  static async unPublishProductByShop({ product_shop, product_id }) {
+    return await unPublishProductByShop({product_shop, product_id});
+  }
+
+  /**
+   * findAllDraftForShop
+   * @param {*} param0
+   * @returns
+   */
+  static async findAllDraftForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isDraft: true };
+    return await findAllDraftForShop({ query, limit, skip });
+  }
+
+  /**
+   * findAllPublishForShop
+   * @param {*} param0 
+   * @returns 
+   */
+  static async findAllPublishForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isPublished: true };
+    return await findAllPublishForShop({ query, limit, skip });
+  }
+
+  /**
+   * searchProductsByUser
+   * @param {*} param0 
+   * @returns 
+   */
+  static async searchProducts({keySearch}) {
+    return await searchProductByUser({ keySearch });
   }
 }
 
