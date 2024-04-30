@@ -8,6 +8,8 @@ const {authentication} = require("../../auth/authUtils");
 
 // not authentication
 router.get("/search/:keySearch", handlerError(productController.getListSearchProduct));
+router.get("", handlerError(productController.getAllProducts));
+router.get("/:product_id", handlerError(productController.getDetailProduct));
 
 // authentication //
 router.use(authentication)
