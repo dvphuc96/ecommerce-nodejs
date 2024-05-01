@@ -17,7 +17,11 @@ const {
   findProduct,
   updateProductById,
 } = require("../models/repositories/product");
-const { removeUndefinedOrNullObject, updateNestedObjectParser } = require("../utils");
+const {
+  removeUndefinedOrNullObject,
+  updateNestedObjectParser,
+} = require("../utils");
+const { insertInventory } = require("../models/repositories/inventory.repo");
 
 // define Factory class to create Product
 
@@ -146,7 +150,16 @@ class Product {
 
   // super create new product
   async createProduct(productId) {
-    return await product.create({ ...this, _id: productId });
+    const newProduct = await product.create({ ...this, _id: productId });
+    if (newProduct) {
+      // add product_stock in inventory collection
+      await insertInventory({
+        productId: newProduct._id,
+        shopId: this.product_shop,
+        stock: this.product_quantity,
+      });
+    }
+    return newProduct;
   }
 
   // super update product
@@ -183,7 +196,10 @@ class Clothing extends Product {
         model: clothing,
       });
     }
-    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams));
+    const updateProduct = await super.updateProduct(
+      productId,
+      updateNestedObjectParser(objectParams)
+    );
     return updateProduct;
   }
 }
@@ -211,7 +227,10 @@ class Electronics extends Product {
       const payload = updateNestedObjectParser(objectParams.product_attributes);
       await updateProductById({ productId, payload, model: electronic });
     }
-    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams));
+    const updateProduct = await super.updateProduct(
+      productId,
+      updateNestedObjectParser(objectParams)
+    );
     return updateProduct;
   }
 }
