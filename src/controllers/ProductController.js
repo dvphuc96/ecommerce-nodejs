@@ -19,10 +19,23 @@ class ProductController {
     }).send(res);
   };
 
+  updateProduct = async (req, res, next) => {
+    new SuccessResponse({
+      message: "Update Product Success!",
+      metadata: await ProductService.updateProduct(
+        req.body.product_type,
+        req.params.productId,
+        {
+          ...req.body,
+          product_shop: req.user.userId,
+        })
+    }).send(res);
+  };
+
   /**
    * publish Product By Shop
-   * @param {import("mongoose").ObjectId} product_shop 
-   * @param {import("mongoose").ObjectId} product_id 
+   * @param {import("mongoose").ObjectId} product_shop
+   * @param {import("mongoose").ObjectId} product_id
    * @return {JSON}
    */
   publishProductByShop = async (req, res, next) => {
@@ -38,8 +51,8 @@ class ProductController {
 
   /**
    * unPublish Product By Shop
-   * @param {import("mongoose").ObjectId} product_shop 
-   * @param {import("mongoose").ObjectId} product_id 
+   * @param {import("mongoose").ObjectId} product_shop
+   * @param {import("mongoose").ObjectId} product_id
    * @return {JSON}
    */
   unPublishProductByShop = async (req, res, next) => {
@@ -84,9 +97,9 @@ class ProductController {
 
   /**
    * getListSearchProduct
-   * @param {*} req 
-   * @param {*} res 
-   * @param {*} next 
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
    */
   getListSearchProduct = async (req, res, next) => {
     new SuccessResponse({

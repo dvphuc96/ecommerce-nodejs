@@ -15,7 +15,9 @@ const {
   searchProductByUser,
   findAllProducts,
   findProduct,
+  updateProductById,
 } = require("../models/repositories/product");
+const { removeUndefinedOrNullObject, updateNestedObjectParser } = require("../utils");
 
 // define Factory class to create Product
 
@@ -42,20 +44,20 @@ class ProductFactory {
     return new productClass(payload).createProduct();
   }
 
-  static async updateProduct(type, payload) {
+  static async updateProduct(type, productId, payload) {
     const productClass = ProductFactory.productRegistry[type];
     if (!productClass) {
       throw new BadRequestError(`Invalid Product Type ${type}`);
     }
-    return new productClass(payload).createProduct();
+    return new productClass(payload).updateProduct(productId);
   }
 
   static async publishProductByShop({ product_shop, product_id }) {
-    return await publishProductByShop({product_shop, product_id});
+    return await publishProductByShop({ product_shop, product_id });
   }
 
   static async unPublishProductByShop({ product_shop, product_id }) {
-    return await unPublishProductByShop({product_shop, product_id});
+    return await unPublishProductByShop({ product_shop, product_id });
   }
 
   /**
@@ -70,8 +72,8 @@ class ProductFactory {
 
   /**
    * findAllPublishForShop
-   * @param {*} param0 
-   * @returns 
+   * @param {*} param0
+   * @returns
    */
   static async findAllPublishForShop({ product_shop, limit = 50, skip = 0 }) {
     const query = { product_shop, isPublished: true };
@@ -80,29 +82,43 @@ class ProductFactory {
 
   /**
    * searchProductsByUser
-   * @param {*} param0 
-   * @returns 
+   * @param {*} param0
+   * @returns
    */
-  static async searchProducts({keySearch}) {
+  static async searchProducts({ keySearch }) {
     return await searchProductByUser({ keySearch });
   }
 
   /**
    * Find All Product
-   * @param {*} param0 
-   * @returns 
+   * @param {*} param0
+   * @returns
    */
-  static async findAllProducts({limit = 50, sort = 'ctime', page = 1, filter = {isPublished: true}}) {
-    return await findAllProducts({ limit, sort, page, filter, select: ['product_name', 'product_price', 'product_thumb']});
+  static async findAllProducts({
+    limit = 50,
+    sort = "ctime",
+    page = 1,
+    filter = { isPublished: true },
+  }) {
+    return await findAllProducts({
+      limit,
+      sort,
+      page,
+      filter,
+      select: ["product_name", "product_price", "product_thumb"],
+    });
   }
 
   /**
    * Find Detail
-   * @param {*} param0 
-   * @returns 
+   * @param {*} param0
+   * @returns
    */
-  static async findProduct({product_id}) {
-    return await findProduct({ product_id, unSelect: ["__v", "product_variations"] });
+  static async findProduct({ product_id }) {
+    return await findProduct({
+      product_id,
+      unSelect: ["__v", "product_variations"],
+    });
   }
 }
 
@@ -128,9 +144,15 @@ class Product {
     this.product_attributes = product_attributes;
   }
 
-  // create new product
+  // super create new product
   async createProduct(productId) {
     return await product.create({ ...this, _id: productId });
+  }
+
+  // super update product
+  async updateProduct(productId, payload) {
+    console.log(productId);
+    return await updateProductById({ productId, payload, model: product });
   }
 }
 
@@ -147,6 +169,22 @@ class Clothing extends Product {
     if (!newProduct) throw new BadRequestError("Create new product error");
 
     return newProduct;
+  }
+
+  async updateProduct(productId) {
+    // 1. remove attributes has null and undefined
+    const objectParams = removeUndefinedOrNullObject(this);
+
+    if (objectParams.product_attributes) {
+      const payload = updateNestedObjectParser(objectParams.product_attributes);
+      await updateProductById({
+        productId,
+        payload,
+        model: clothing,
+      });
+    }
+    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams));
+    return updateProduct;
   }
 }
 
@@ -165,6 +203,17 @@ class Electronics extends Product {
 
     return newProduct;
   }
+
+  async updateProduct(productId) {
+    // 1. remove attributes has null and undefined
+    const objectParams = removeUndefinedOrNullObject(this);
+    if (objectParams.product_attributes) {
+      const payload = updateNestedObjectParser(objectParams.product_attributes);
+      await updateProductById({ productId, payload, model: electronic });
+    }
+    const updateProduct = await super.updateProduct(productId, updateNestedObjectParser(objectParams));
+    return updateProduct;
+  }
 }
 
 // define sub-class for different product types furniture
@@ -180,6 +229,16 @@ class Furnitures extends Product {
     if (!newProduct) throw new BadRequestError("Create new product error");
 
     return newProduct;
+  }
+
+  async updateProduct(productId) {
+    // 1. remove attributes has null and undefined
+    const objectParams = removeUndefinedOrNullObject(this);
+    if (objectParams.product_attributes) {
+      await updateProductById({ productId, objectParams, model: furniture });
+    }
+    const updateProduct = await super.updateProduct(productId, objectParams);
+    return updateProduct;
   }
 }
 
