@@ -16,7 +16,11 @@ router.use(authentication)
 
 // create product
 router.post("", handlerError(productController.createProduct));
-// Update product
+
+// update
+router.patch("/:productId", handlerError(productController.updateProduct));
+
+// Update product publish
 router.post("/publish/:id", handlerError(productController.publishProductByShop));
 router.post("/unpublish/:id", handlerError(productController.unPublishProductByShop));
 // query
