@@ -5,7 +5,7 @@ const DOCUMENT_NAME = "Inventory";
 const COLLECTION_NAME = "Inventories";
 
 // Declare the Schema of the Mongo model
-var inventorychema = new Schema(
+var inventorySchema = new Schema(
   {
     inven_productId: {
       type: Schema.Types.ObjectId,
@@ -38,5 +38,5 @@ var inventorychema = new Schema(
 
 //Export the model
 module.exports = {
-  inventory: model(DOCUMENT_NAME, inventorychema),
+  inventory: model(DOCUMENT_NAME, inventorySchema),
 };

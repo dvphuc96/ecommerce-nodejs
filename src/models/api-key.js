@@ -5,7 +5,7 @@ const DOCUMENT_NAME = "ApiKey";
 const COLLECTION_NAME = "ApiKeys";
 
 // Declare the Schema of the Mongo model
-var apiKeychema = new Schema(
+var apiKeySchema = new Schema(
   {
     key: {
       type: String,
@@ -29,4 +29,4 @@ var apiKeychema = new Schema(
 );
 
 //Export the model
-module.exports = model(DOCUMENT_NAME, apiKeychema);
+module.exports = model(DOCUMENT_NAME, apiKeySchema);
