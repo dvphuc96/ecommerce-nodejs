@@ -1,16 +1,15 @@
 "use strict";
 
-const {
-  product,
-  electronic,
-  clothing,
-  furniture,
-} = require("../../models/product");
+const { product, electronic, clothing, furniture } = require("../product");
 const {
   Types: { ObjectId },
 } = require("mongoose");
 
-const { getSelectData, getUnSelectData } = require("../../utils");
+const {
+  getSelectData,
+  getUnSelectData,
+  convertToObjectId,
+} = require("../../utils");
 
 const findAllDraftForShop = async ({ query, limit, skip }) => {
   return await queryProduct({ query, limit, skip });
@@ -106,6 +105,10 @@ const updateProductById = async ({
   return await model.findByIdAndUpdate(productId, payload, { new: isNew });
 };
 
+const findProductById = async (productId) => {
+  return await product.findOne({ _id: convertToObjectId(productId) }).lean();
+};
+
 module.exports = {
   findAllDraftForShop,
   findAllPublishForShop,
@@ -115,4 +118,5 @@ module.exports = {
   findAllProducts,
   findProduct,
   updateProductById,
+  findProductById,
 };

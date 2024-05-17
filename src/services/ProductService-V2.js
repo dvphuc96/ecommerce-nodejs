@@ -16,7 +16,7 @@ const {
   findAllProducts,
   findProduct,
   updateProductById,
-} = require("../models/repositories/product");
+} = require("../models/repositories/product.repo");
 const {
   removeUndefinedOrNullObject,
   updateNestedObjectParser,
@@ -109,7 +109,7 @@ class ProductFactory {
       sort,
       page,
       filter,
-      select: ["product_name", "product_price", "product_thumb"],
+      select: ["product_name", "product_price", "product_thumb", "product_shop"],
     });
   }
 
