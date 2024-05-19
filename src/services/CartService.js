@@ -36,7 +36,7 @@ class CartService {
       return await createUserCart({ userId, product });
     }
 
-    // nếu có giỏ hàng rồi nhưng chưa có sản phẩm?
+    // If you have a cart but no products in it
     if (!userCart.cart_products.length) {
       userCart.cart_products = [product];
       return await userCart.save();
@@ -44,9 +44,11 @@ class CartService {
 
     const index = userCart.cart_products.findIndex((cartProduct) => cartProduct.productId === product.productId);
     if (index === -1) {
+      // have a shopping cart, already have product, add 1 new product
       userCart.cart_products.push(product);
       return await userCart.save();
     } else {
+      // update quantity for product
       return await updateUserCartQuantity({ userId, product });
     }
   }
