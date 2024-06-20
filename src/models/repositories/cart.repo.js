@@ -1,5 +1,6 @@
 "use strict";
 
+const { convertToObjectId } = require("../../utils");
 const { cart } = require("../cart.model");
 
 /**
@@ -81,10 +82,15 @@ const getListUserCart = async ({ userId }) => {
     .lean();
 };
 
+const findCartById = async (cartId) => {
+  return await cart.findOne({ _id: convertToObjectId(cartId) }).lean();
+};
+
 module.exports = {
   checkCartExists,
   createUserCart,
   updateUserCartQuantity,
   deleteUserCart,
   getListUserCart,
+  findCartById,
 };

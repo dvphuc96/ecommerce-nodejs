@@ -205,7 +205,7 @@ class DiscountService {
     if (discount_min_order_value > 0) {
       // get total
       totalOrder = products.reduce((total, product) => {
-        return total + product.product_quantity * product.product_price;
+        return total + (product.quantity * product.price);
       }, 0);
 
       if (totalOrder < discount_min_order_value) {
