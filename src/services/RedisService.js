@@ -8,8 +8,8 @@ const {
 } = require("../models/repositories/inventory.repo");
 const redisClient = redis.createClient();
 
-const pexpire = promisify(redisClient.pexpire).bind(redisClient);
-const setnxAsync = promisify(redisClient.setnx).bind(redisClient);
+const pexpire = promisify(redisClient.pExpire).bind(redisClient);
+const setnxAsync = promisify(redisClient.setNX).bind(redisClient);
 
 const acquireLock = async (productId, quantity, cartId) => {
   // khi có client vào mua sẽ tạo 1 key, rồi đưa cho người mua trước, khi người mua trước thực hiện xog sẽ chuyển key cho người tiếp theo
