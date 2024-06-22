@@ -15,6 +15,8 @@ morgan("compile"): dc bật khi chạy product
 morgan("common")
 morgan("short")
 morgan("tiny")
+npm i cloundinary --save
+npm i multer --save
 npm i morgan --save-dev
 npm i helmet --save-dev (ngăn chặn hacker có thể kiểm tra xem website đang sử dụng công nghệ gì)
 npm i compression --save-dev
