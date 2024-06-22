@@ -10,7 +10,7 @@ const { uploadDisk } = require("../../configs/multer.config");
 // authentication //
 // router.use(authentication)
 
-// create product
+// upload image
 router.post("/product", handlerError(uploadController.uploadImageFromUrl));
 router.post(
   "/product/thumb",
