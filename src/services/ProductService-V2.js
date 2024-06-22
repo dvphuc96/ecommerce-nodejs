@@ -22,6 +22,8 @@ const {
   updateNestedObjectParser,
 } = require("../utils");
 const { insertInventory } = require("../models/repositories/inventory.repo");
+const { pushNotificationToSystem } = require("./NotificationService");
+const { findShopNameById } = require("./ShopService");
 
 // define Factory class to create Product
 
@@ -150,6 +152,7 @@ class Product {
 
   // super create new product
   async createProduct(productId) {
+    const shop_name = await findShopNameById(this.product_shop);
     const newProduct = await product.create({ ...this, _id: productId });
     if (newProduct) {
       // add product_stock in inventory collection
@@ -158,6 +161,19 @@ class Product {
         shopId: this.product_shop,
         stock: this.product_quantity,
       });
+
+      // push notification to system
+      pushNotificationToSystem({
+        type: "SHOP-001",
+        receivedId: 1,
+        senderId: this.product_shop,
+        options: {
+          product_name: this.product_name,
+          shop_name,
+        },
+      })
+        .then((rs) => console.log(rs))
+        .catch((error) => console.log(error));
     }
     return newProduct;
   }

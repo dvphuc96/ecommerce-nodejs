@@ -1,6 +1,7 @@
 "use strict";
 
 const shopModel = require("../models/shop");
+const { convertToObjectId } = require("../utils");
 
 /**
  * Find Shop By Email
@@ -14,6 +15,12 @@ const findShopByEmail = async ({
   return await shopModel.findOne({ email }).select(select).lean();
 };
 
+const findShopNameById = async (shop_id) => {
+   const result = await shopModel.findOne({ _id: convertToObjectId(shop_id) }).select({name: 1}).lean();
+   return result.name ?? null;
+}
+
 module.exports = {
   findShopByEmail,
+  findShopNameById,
 };
