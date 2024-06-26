@@ -27,7 +27,6 @@ class UploadController {
    */
   uploadImageFromLocal = async (req, res, next) => {
     const { file } = req;
-    console.log({ file });
     if (!file) throw new BadRequestError("File missing");
     new SuccessResponse({
       message: "Upload Image From Local Success!",
@@ -50,6 +49,23 @@ class UploadController {
       message: "Upload Multiple Image Success!",
       metadata: await UploadService.uploadMultipleImage({
         paths: filePaths,
+      }),
+    }).send(res);
+  };
+
+  /**
+   * upload Image To S3
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  uploadImageS3Controller = async (req, res, next) => {
+    const { file } = req;
+    if (!file) throw new BadRequestError("File missing");
+    new SuccessResponse({
+      message: "Upload Image Use S3 Client Success!",
+      metadata: await UploadService.uploadImageToS3Service({
+        file,
       }),
     }).send(res);
   };
