@@ -15,6 +15,21 @@ morgan("compile"): dc bật khi chạy product
 morgan("common")
 morgan("short")
 morgan("tiny")
+
+npm i @aws-sdk/client-s3
+https://www.npmjs.com/package/@aws-sdk/client-s3
+
+npm install @aws-sdk/s3-request-presigner --save
+https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/Package/-aws-sdk-s3-request-presigner/
+
+create key private, public
+openssl genrsa -out private_key.pem  2048
+openssl rsa -in private_key.pem -pubout -out public_key.pem
+
+### add signer for url cloudfront
+npm i @aws-sdk/cloudfront-signer --save
+https://www.npmjs.com/package/@aws-sdk/cloudfront-signer
+
 npm i cloundinary --save
 npm i multer --save
 npm i morgan --save-dev

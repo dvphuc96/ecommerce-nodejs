@@ -2,7 +2,16 @@
 
 const cloudinary = require("../configs/cloudinary.config");
 const { convertToObjectId } = require("../utils");
-
+const {
+  s3,
+  PutObjectCommand,
+  GetObjectCommand,
+} = require("../configs/s3.config");
+// const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { getSignedUrl } = require("@aws-sdk/cloudfront-signer"); // CJS
+const crypto = require("crypto");
+const randomImageName = () => crypto.randomBytes(16).toString("hex");
+const urlImagePublic = process.env.AWS_BUCKET_URL_IMAGE_PUBLIC;
 // Constants
 const DEFAULT_FOLDER_NAME = "product/8409";
 const DEFAULT_IMAGE_PREFIX = "image_";
@@ -12,6 +21,42 @@ const THUMB_HEIGHT = 100;
 const THUMB_CROP = "fill";
 const THUMB_GRAVITY = "auto";
 const THUMB_FORMAT = "jpg";
+
+/////////////// Upload file use S3Client ///////////////
+// 3.upload Image From Local
+const uploadImageToS3Service = async ({ file }) => {
+  try {
+    const imageName = randomImageName();
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: imageName,
+      Body: file.buffer,
+      ContentType: "image/jpeg",
+    });
+
+    // export url s3
+    const result = await s3.send(command);
+    // const signedUrl = new GetObjectCommand({
+    //   Bucket: process.env.AWS_BUCKET_NAME,
+    //   Key: imageName,
+    // });
+    // const urlS3 = await getSignedUrl(s3, signedUrl, { expiresIn: 3600 });
+    const signedUrl = getSignedUrl({
+      url: `${urlImagePublic}/${imageName}`,
+      keyPairId: process.env.AWS_BUCKET_PUBLIC_KEY_ID,
+      dateLessThan: new Date(Date.now() + 1000 * 60 * 60 * 24), // expire after 1d
+      privateKey: process.env.AWS_BUCKET_PRIVATE_KEY_ID,
+    });
+    return {
+      signedUrl,
+      result,
+    };
+  } catch (error) {
+    console.error("Error uploading image use s3Client::", error);
+  }
+};
+
+/////////////// End s3 Service ///////////////
 
 // Helper function to upload a file to Cloudinary
 const uploadFileToCloudinary = async ({
@@ -66,7 +111,9 @@ const uploadImageFromLocal = async ({ path }) => {
 const uploadMultipleImage = async ({ paths }) => {
   // paths là một mảng chứa các đường dẫn tới các file cần upload
   try {
-    const uploadPromises = paths.map(path => uploadFileToCloudinary({ path }));
+    const uploadPromises = paths.map((path) =>
+      uploadFileToCloudinary({ path })
+    );
     const results = await Promise.all(uploadPromises);
     return results;
   } catch (error) {
@@ -78,4 +125,5 @@ module.exports = {
   uploadImageFromUrl,
   uploadImageFromLocal,
   uploadMultipleImage,
+  uploadImageToS3Service,
 };
