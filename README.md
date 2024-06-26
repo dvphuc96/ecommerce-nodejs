@@ -29,7 +29,11 @@ openssl rsa -in private_key.pem -pubout -out public_key.pem
 ### add signer for url cloudfront
 npm i @aws-sdk/cloudfront-signer --save
 https://www.npmjs.com/package/@aws-sdk/cloudfront-signer
-
+### install restart server when deploy (install in server ubuntu)
+npm install pm2@latest -g
+pm2 list
+pm2 start server.js --name=ecommerce-backend
+============
 npm i cloundinary --save
 npm i multer --save
 npm i morgan --save-dev
