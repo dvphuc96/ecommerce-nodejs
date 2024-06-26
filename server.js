@@ -5,6 +5,13 @@ const server = app.listen(PORT, () => {
   console.log(`wsv ecommerce start with ${PORT}`);
 });
 
+router.get("/checkstatus", (req, res, next) => {
+  res.status(200).json({
+    status: "success",
+    message: 'api ok',
+  })
+});
+
 // process.on('SIGINT', () => {
 //     server.close(() => console.log('Exit Server Express'));
 // })
