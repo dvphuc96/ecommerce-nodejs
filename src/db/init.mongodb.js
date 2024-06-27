@@ -1,7 +1,7 @@
 "use strict";
 
 const mongoose = require("mongoose");
-const connectString = "mongodb://localhost:27017/shopDev"
+const connectString = process.env.DATABASE_URL
 const { countConnect } = require(".././helpers/check-connect");
 // how to check
 class Database {
