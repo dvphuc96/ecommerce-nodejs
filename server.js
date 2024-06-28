@@ -1,7 +1,7 @@
 const app = require("./src/app");
 const swagger = require("./swagger");
 
-const PORT = process.env.PORT || 3056;
+const PORT = process.env.PORT || 3055;
 swagger(app);
 const server = app.listen(PORT, () => {
   console.log(`wsv ecommerce start with ${PORT}`);
