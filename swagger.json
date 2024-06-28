@@ -1,0 +1,101 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Shop Ecommerce API",
+    "version": "1",
+    "description": "Shop Ecommerce REST API"
+  },
+  "basePath": "/v1/api",
+  "consumes": [
+    "application/json-patch+json",
+    "application/json",
+    "text/json",
+    "application/*+json"
+  ],
+  "produces": [],
+  "paths": {
+    "/product": {
+      "get": {
+        "summary": "Retrieve a list of all products",
+        "description": "Retrieve a list of all products from the database",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "X-Api-Key",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "Nhập api key"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/product/search/{keySearch}": {
+      "get": {
+        "tags": ["product"],
+        "summary": "Search for products",
+        "description": "Returns a list of products based on the search key.",
+        "operationId": "searchProducts",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "keySearch",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "The search keyword for products"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": true,
+            "type": "string",
+            "description": "API key required to access this endpoint"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Product": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string",
+          "description": "Unique identifier for the product",
+          "example": "664f4327b8741c607cdb2874"
+        },
+        "product_name": {
+          "type": "string",
+          "description": "Name of the product",
+          "example": "SamSung S23"
+        },
+        "product_thumb": {
+          "type": "string",
+          "description": "Thumbnail image of the product",
+          "example": "product_thumb"
+        },
+        "product_price": {
+          "type": "number",
+          "description": "Price of the product",
+          "example": 30000000
+        },
+        "product_shop": {
+          "type": "string",
+          "description": "Identifier for the shop selling the product",
+          "example": "664f4234b8741c607cdb2866"
+        }
+      }
+    }
+  }
+}
