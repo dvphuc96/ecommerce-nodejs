@@ -8,6 +8,9 @@ const HEADER = {
 };
 
 const checkApiKey = async (req, res, next) => {
+  if (req.path === '/api-docs' || req.path.startsWith('/api-docs/')) {
+    return next();
+  }
   try {
     const key = req.headers[HEADER.API_KEY]?.toString();
     if (!key) {

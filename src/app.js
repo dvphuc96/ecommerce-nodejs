@@ -26,6 +26,9 @@ app.use("/", require("./routes"));
 
 // middleware
 app.use((req, res, next) => {
+  if (req.path === '/api-docs' || req.path.startsWith('/api-docs/')) {
+    return next();
+  }
   const error = new Error("Not found");
   error.status = 404;
   next(error);
@@ -33,6 +36,9 @@ app.use((req, res, next) => {
 
 // function handle error
 app.use((error, req, res, next) => {
+  if (req.path === '/api-docs' || req.path.startsWith('/api-docs/')) {
+    return next();
+  }
   const statusCode = error.status || 500;
   return res.status(statusCode).json({
     status: "error",
