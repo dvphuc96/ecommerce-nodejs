@@ -34,6 +34,10 @@ npm install pm2@latest -g
 pm2 list
 pm2 start server.js --name=ecommerce-backend
 ============
+### quan ly user
+npm i accesscontrol
+https://www.npmjs.com/package/accesscontrol
+============
 npm i cloundinary --save
 npm i multer --save
 npm i morgan --save-dev
