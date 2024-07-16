@@ -9,6 +9,8 @@ router.use(checkApiKey);
 // check permission
 router.use(checkPermission("0000"));
 router.use("/v1/api/notification", require("./notification"));
+router.use("/v1/api/email", require("./email"));
+router.use("/v1/api/user", require("./user"));
 router.use("/v1/api/admin", require("./admin"));
 router.use("/v1/api/profile", require("./profile"));
 router.use("/v1/api/upload", require("./upload"));
