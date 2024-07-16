@@ -4,7 +4,12 @@ const express = require("express");
 const { default: helmet } = require("helmet");
 const morgan = require("morgan");
 const { checkOverloadConnect } = require("./helpers/check-connect");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 const app = express();
+
+app.use(bodyParser.json());
+app.use(cors());
 
 // init middleware
 app.use(morgan("dev"));
