@@ -38,6 +38,12 @@ pm2 start server.js --name=ecommerce-backend
 npm i accesscontrol
 https://www.npmjs.com/package/accesscontrol
 ============
+
+### send mail
+npm i nodemailer
+https://www.npmjs.com/package/nodemailer
+============
+
 npm i cloundinary --save
 npm i multer --save
 npm i morgan --save-dev

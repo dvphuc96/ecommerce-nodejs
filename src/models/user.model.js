@@ -49,7 +49,7 @@ var userSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Role",
     },
-    usr_avatar: {
+    usr_status: {
       type: String,
       default: "pending",
       enum: ["pending", "active", "block"],
